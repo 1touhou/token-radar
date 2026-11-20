@@ -3,12 +3,71 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Token Radar: pre-token protocols ranked by implied value</title>
+<title>Token Launch Radar — pre-token protocols ranked by implied value</title>
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<a class="skip" href="#board">Skip to the board</a>
-<main id="board" tabindex="-1" aria-busy="true"></main>
+<header class="top">
+  <div>
+    <h1>Token Launch Radar</h1>
+    <p class="lede">Protocols that record no token, ranked by what their token would be
+    worth if it launched on the record as it stands — and what to do to farm
+    each one before it does.</p>
+  </div>
+  <dl class="facts" id="facts"></dl>
+</header>
+
+<section class="model" id="model-panel" aria-label="How the value is worked out">
+  <h2>How an implied value is worked out</h2>
+  <p class="formula">implied value = TVL &times; 0.25 &times; growth &times; maturity &times; breadth</p>
+  <ul class="terms">
+    <li><strong>growth</strong> = 1 + clamp(7-day TVL change, &minus;60%, +120%) &divide; 100 &times; 0.5</li>
+    <li><strong>maturity</strong> = 0.6 + min(age in days, 1095) &divide; 1095 &times; 0.4
+      (age unknown: 365 days)</li>
+    <li><strong>breadth</strong> = 1 + 0.05 &times; min(chains &minus; 1, 4), at most 1.20</li>
+  </ul>
+  <p class="note">Every row uses the same formula and no name is special-cased. A protocol
+  is shown as pre-token because its record carries no token — never as proof
+  that it has none.</p>
+</section>
+
+<main>
+  <div class="tabs" role="tablist" aria-label="Board">
+    <button id="tab-pre" role="tab" aria-selected="true">Pre-token board</button>
+    <button id="tab-live" role="tab" aria-selected="false">Live token</button>
+  </div>
+
+  <div class="controls" id="controls">
+    <label>Search <input id="q" type="search" placeholder="Name or slug…" autocomplete="off"></label>
+    <label>Category <select id="cat"><option value="">All categories</option></select></label>
+    <label>Chain <select id="chain"><option value="">All chains</option></select></label>
+    <label class="check"><input id="watch" type="checkbox"> Watchlist only</label>
+    <span class="count" id="count" aria-live="polite"></span>
+  </div>
+
+  <div class="table-wrap">
+    <table id="board">
+      <thead>
+        <tr>
+          <th data-sort="rank" aria-sort="ascending">Rank</th>
+          <th data-sort="name">Protocol</th>
+          <th data-sort="tvl_usd">TVL</th>
+          <th data-sort="change_7d">7d</th>
+          <th data-sort="age_days">Age</th>
+          <th data-sort="implied_value_usd">Implied value</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p class="empty" id="empty" hidden>No protocol matches these filters.</p>
+  </div>
+</main>
+
+<aside class="drawer" id="drawer" aria-label="Protocol detail" hidden>
+  <button class="close" id="drawer-close" aria-label="Close detail">&times;</button>
+  <div id="drawer-body"></div>
+</aside>
+
 <script src="../data.js"></script>
 <script src="app.js"></script>
 </body>
